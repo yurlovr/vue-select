@@ -285,20 +285,20 @@
       getOptionKey: {
         type: Function,
         default(option) {
-          if (typeof option === 'object' && option.id) {
-            return option.id
-          } else {
+          if (typeof option === 'object') {
             try {
-              return JSON.stringify(option)
+              return option.hasOwnProperty('id') ? option.id : JSON.stringify(option);
             } catch(e) {
-              return console.warn(
+              console.warn(
                 `[vue-select warn]: Could not stringify option ` +
                 `to generate unique key. Please provide'getOptionKey' prop ` +
                 `to return a unique key for each option.\n` +
                 'https://vue-select.org/api/props.html#getoptionkey'
               );
+              return undefined;
             }
           }
+          return option;
         }
       },
 
@@ -575,7 +575,6 @@
       select(option) {
         if (!this.isOptionSelected(option)) {
           if (this.taggable && !this.optionExists(option)) {
-            option = this.createOption(option);
             this.$emit('option:created', option);
           }
           if (this.multiple) {
@@ -701,25 +700,7 @@
        * @returns {boolean}
        */
       optionComparator(value, option) {
-        if (typeof value !== 'object' && typeof option !== 'object') {
-          // Comparing primitives
-          if (value === option) {
-            return true
-          }
-        } else {
-          // Comparing objects
-          if (value === this.reduce(option)) {
-            return true
-          }
-          if ((this.getOptionLabel(value) === this.getOptionLabel(option)) || (this.getOptionLabel(value) === option)) {
-            return true
-          }
-          if (this.reduce(value) === this.reduce(option)) {
-            return true
-          }
-        }
-
-        return false;
+        return this.getOptionKey(value) === this.getOptionKey(option);
       },
 
       /**
@@ -767,14 +748,7 @@
        * @return {boolean}
        */
       optionExists(option) {
-        return this.optionList.some(opt => {
-          if (typeof opt === 'object' && this.getOptionLabel(opt) === option) {
-            return true
-          } else if (opt === option) {
-            return true
-          }
-          return false
-        })
+        return this.optionList.some(_option => this.optionComparator(_option, option))
       },
 
       /**
@@ -1082,7 +1056,7 @@
         }
 
         let options = this.search.length ? this.filter(optionList, this.search, this) : optionList;
-        if (this.taggable && this.search.length && !this.optionExists(this.search)) {
+        if (this.taggable && this.search.length && !this.optionExists(this.createOption(this.search))) {
           options.unshift(this.search)
         }
         return options
