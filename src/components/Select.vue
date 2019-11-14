@@ -57,14 +57,15 @@
           v-for="(option, index) in filteredOptions"
           :key="getOptionKey(option)"
           class="vs__dropdown-option"
-          :class="{ 'vs__dropdown-option--selected': isOptionSelected(option), 'vs__dropdown-option--highlight': index === typeAheadPointer, 'vs__dropdown-option--disabled': !selectable(option) }"
-          @mouseover="selectable(option) ? typeAheadPointer = index : null"
-          @mousedown.prevent.stop="selectable(option) ? select(option) : null"
+          :class="{ 'vs__dropdown-option--selected': option.selected, 'vs__dropdown-option--highlight': index === typeAheadPointer, 'vs__dropdown-option--disabled': !option.selectable }"
+          @mouseover="option.selectable ? typeAheadPointer = index : null"
+          @mousedown.prevent.stop="option.selectable ? select(option) : null"
         >
           <slot name="option" v-bind="normalizeOptionForSlot(option)">
-            {{ getOptionLabel(option) }}
+            {{ option.label }}
           </slot>
         </li>
+
         <li v-if="!filteredOptions.length" class="vs__no-options" @mousedown.stop="">
           <slot name="no-options">Sorry, no matching options.</slot>
         </li>
@@ -78,6 +79,7 @@
   import typeAheadPointer from '../mixins/typeAheadPointer'
   import ajax from '../mixins/ajax'
   import childComponents from './childComponents';
+  import Option from '@/model/Option';
 
   /**
    * @name VueSelect
@@ -784,7 +786,7 @@
        * @return {*}
        */
       normalizeOptionForSlot (option) {
-        return (typeof option === 'object') ? option : {[this.label]: option};
+        return option;
       },
 
       /**
@@ -943,7 +945,9 @@
        * @return {Array}
        */
       optionList () {
-        return this.options.concat(this.pushedTags);
+        return this.options
+          .map(option => new Option(option, this))
+          // .concat(this.pushedTags);
       },
 
       /**

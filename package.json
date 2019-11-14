@@ -15,7 +15,7 @@
   "scripts": {
     "serve": "vue-cli-service serve ./dev/dev.js",
     "serve:docs": "cd docs && yarn serve",
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service build ./src/index.js",
     "build:docs": "cd docs && yarn build",
     "build:preview": "cd docs && yarn build",
     "test": "vue-cli-service test:unit",
