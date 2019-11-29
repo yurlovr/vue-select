@@ -271,12 +271,16 @@
       },
 
       /**
-       * Callback to get an option key. If {option}
-       * is an object and has an {id}, returns {option.id}
-       * by default, otherwise tries to serialize {option}
-       * to JSON.
+       * Generate a unique identifier for each option. If `option`
+       * is an object and `option.hasOwnProperty('id')` exists,
+       * `option.id` is used by default, otherwise the option
+       * will be serialized to JSON.
        *
-       * The key must be unique for an option.
+       * If you are supplying a lot of options, you should
+       * provide your own keys, as JSON.stringify can be
+       * slow with lots of objects.
+       *
+       * The result of this function *must* be unique.
        *
        * @type {Function}
        * @param  {Object || String} option
@@ -284,22 +288,21 @@
        */
       getOptionKey: {
         type: Function,
-        default(option) {
-          if (typeof option === 'object') {
-            try {
-              return option.hasOwnProperty('id') ? option.id : JSON.stringify(option);
-            } catch(e) {
-              console.warn(
-                `[vue-select warn]: Could not stringify option ` +
-                `to generate unique key. Please provide'getOptionKey' prop ` +
-                `to return a unique key for each option.\n` +
-                'https://vue-select.org/api/props.html#getoptionkey'
-              );
-              return undefined;
-            }
+        default (option) {
+          if (typeof option !== 'object') {
+            return option;
           }
-          return option;
-        }
+
+          try {
+            return option.hasOwnProperty('id') ? option.id : JSON.stringify(option);
+          } catch (e) {
+            const warning = `[vue-select warn]: Could not stringify this option ` +
+              `to generate unique key. Please provide'getOptionKey' prop ` +
+              `to return a unique key for each option.\n` +
+              'https://vue-select.org/api/props.html#getoptionkey';
+            return console.warn(warning, option, e);
+          }
+        },
       },
 
       /**
@@ -687,9 +690,7 @@
        * @return {Boolean}        True when selected | False otherwise
        */
       isOptionSelected(option) {
-        return this.selectedValue.some(value => {
-          return this.optionComparator(value, option)
-        })
+        return this.selectedValue.some(value => this.optionComparator(value, option))
       },
 
       /**
