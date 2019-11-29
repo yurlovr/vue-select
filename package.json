@@ -18,8 +18,7 @@
     "build": "cross-env NODE_ENV=production webpack --config build/webpack.prod.conf.js --progress",
     "build:docs": "cd docs && yarn build",
     "build:preview": "cd docs && yarn build",
-    "test": "jest",
-    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --watch"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -46,7 +45,6 @@
     "cross-env": "^5.2.0",
     "css-loader": "^2.1.0",
     "cssnano": "^4.1.10",
-    "cz-conventional-changelog": "3.0.2",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^24.1.0",
@@ -104,10 +102,5 @@
       "html",
       "text-summary"
     ]
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
   }
 }
