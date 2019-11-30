@@ -386,7 +386,7 @@
        * @return {Boolean}
        */
       filter: {
-        "type": Function,
+        type: Function,
         default(options, search) {
           return options.filter((option) => {
             let label = this.getOptionLabel(option)
@@ -1077,7 +1077,7 @@
        */
       showClearButton() {
         return !this.multiple && this.clearable && !this.open && !this.isValueEmpty
-      }
+      },
     },
 
   }
