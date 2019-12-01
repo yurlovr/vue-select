@@ -152,6 +152,34 @@ describe("When reduce prop is defined", () => {
     );
   });
 
+  it('can work with falsey values', () => {
+    const option = {value: 0, label: 'No'};
+    const Select = shallowMount(VueSelect, {
+      propsData: {
+        reduce: option => option.value,
+        options: [option, {value: 1, label: 'Yes'}],
+        value: 0,
+      },
+    });
+
+    expect(Select.vm.findOptionFromReducedValue(option)).toEqual(option);
+    expect(Select.vm.selectedValue).toEqual([option]);
+  });
+
+  it('works with null values', () => {
+    const option = {value: null, label: 'No'};
+    const Select = shallowMount(VueSelect, {
+      propsData: {
+        reduce: option => option.value,
+        options: [option, {value: 1, label: 'Yes'}],
+        value: null,
+      },
+    });
+
+    expect(Select.vm.findOptionFromReducedValue(option)).toEqual(option);
+    expect(Select.vm.selectedValue).toEqual([option]);
+  });
+
   describe("And when a reduced option is a nested object", () => {
     it("can determine if an object is pre-selected", () => {
       const nestedOption = { value: { nested: true }, label: "foo" };
@@ -181,5 +209,20 @@ describe("When reduce prop is defined", () => {
       expect(Select.vm.isOptionSelected(nestedOption)).toEqual(true);
     });
 
+  });
+
+  it("reacts correctly when value property changes", () => {
+    const optionToChangeTo = { id: 1, label: "Foo" };
+    const Select = shallowMount(VueSelect, {
+      propsData: {
+        value: 2,
+        reduce: option => option.id,
+        options: [optionToChangeTo, { id: 2, label: "Bar" }]
+      }
+    });
+
+    Select.setProps({ value: optionToChangeTo.id });
+
+    expect(Select.vm.selectedValue).toEqual([optionToChangeTo]);
   });
 });

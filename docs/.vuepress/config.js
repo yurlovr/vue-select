@@ -114,13 +114,22 @@ module.exports = {
           ],
         },
         {
-          title: 'Integrations',
+          title: 'Use Cases',
           collapsable: false,
           children: [
             ['guide/validation', 'Validation'],
-            ['guide/filtering', 'Filtering'],
+            ['guide/selectable', 'Limiting Selections'],
             ['guide/vuex', 'Vuex'],
             ['guide/ajax', 'AJAX'],
+            ['guide/loops', 'Using in Loops'],
+          ],
+        },
+        {
+          title: 'Customizing',
+          collapsable: false,
+          children: [
+            ['guide/keydown', 'Keydown Events'],
+            ['guide/filtering', 'Filtering'],
           ],
         },
         {
