@@ -5,7 +5,7 @@ describe("Removing values", () => {
     const Select = selectWithProps({ multiple: true });
     Select.vm.$data._value = 'one';
     await Select.vm.$nextTick();
-    
+
     Select.find(".vs__deselect").trigger("click");
     expect(Select.emitted().input).toEqual([[[]]]);
     expect(Select.vm.selectedValue).toEqual([]);
