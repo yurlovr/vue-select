@@ -14,9 +14,15 @@
               :multiple="multiple"
               :disabled="disabled">
           <span :key="getOptionKey(option)" class="vs__selected">
-            <slot name="selected-option" v-bind="normalizeOptionForSlot(option)">
+            <slot name="selected-option" v-bind="normalizeOptionForSlot(option)" v-if="!showPrice">
               {{ getOptionLabel(option) }}
             </slot>
+            <slot name="option" v-bind="normalizeOptionForSlot(option)" v-else>
+              <span class="option_label">
+                <span class="option_label-name">{{ getOptionLabelPrice(option).name }}</span>
+                <span class="option_label-price">{{ getOptionLabelPrice(option).price }}</span>
+              </span>
+          </slot>
             <button v-if="multiple" :disabled="disabled" @click="deselect(option)" type="button" class="vs__deselect" aria-label="Deselect option" ref="deselectButtons">
               <component :is="childComponents.Deselect" />
             </button>
@@ -119,7 +125,26 @@
       options: {
         type: Array,
         default() {
-          return []
+          return [ 
+            {
+              id: "11",
+              serviceName: "Наименование услуги 1",
+              price: "2990",
+              label: "Наименование услуги 1 2990.00 ₽",
+            },
+            {
+              id: "12",
+              serviceName: "Наименование услуги 2",
+              price: "2900",
+              label: "Наименование услуги 2 2900.00 ₽",
+            },
+            {
+              id: "13",
+              serviceName: "Наименование услуги 3",
+              price: "2000",
+              label: "Наименование услуги 3 2000.00 ₽",
+            }
+          ]
         },
       },
 
@@ -241,6 +266,10 @@
         type: Function,
         default: option => true,
       },
+      showPrice: {
+        type: Boolean,
+        default: true,
+      },
 
       /**
        * Callback to generate the label text. If {option}
@@ -269,6 +298,31 @@
             return option[this.label]
           }
           return option;
+        }
+      },
+      getOptionLabelPrice: {
+        type: Function,
+        default(option) {
+          if (typeof option === 'object') {
+            if (!option.hasOwnProperty(this.label)) {
+              return console.warn(
+                `[vue-select warn]: Label key "option.${this.label}" does not` +
+                ` exist in options object ${JSON.stringify(option)}.\n` +
+                'https://vue-select.org/api/props.html#getoptionlabel'
+              )
+            }
+            console.log(option)
+            console.log(option['price'])
+            if (this.showPrice && option['price'] && option['serviceName']) {
+              console.log('tut')
+              return {
+                price: option['price'],
+                name: option['serviceName'],
+              }
+            }
+            return {name: option[this.label]}
+          }
+          return {name: option};
         }
       },
 
