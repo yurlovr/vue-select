@@ -20,7 +20,7 @@
             <slot name="option" v-bind="normalizeOptionForSlot(option)" v-else>
               <span class="option_label">
                 <span class="option_label-name">{{ getOptionLabelPrice(option).name }}</span>
-                <span class="option_label-price">{{ getOptionLabelPrice(option).price }}</span>
+                <span class="option_label-price">{{ getOptionLabelPrice(option).price }} ₽</span>
               </span>
           </slot>
             <button v-if="multiple" :disabled="disabled" @click="deselect(option)" type="button" class="vs__deselect" aria-label="Deselect option" ref="deselectButtons">
@@ -311,10 +311,7 @@
                 'https://vue-select.org/api/props.html#getoptionlabel'
               )
             }
-            console.log(option)
-            console.log(option['price'])
             if (this.showPrice && option['price'] && option['serviceName']) {
-              console.log('tut')
               return {
                 price: option['price'],
                 name: option['serviceName'],
